@@ -15,13 +15,13 @@ UserDatabaseSchema = pydantic_model_creator(
 
 
 class UpdateUser(BaseModel):
-    name = Optional[str]
-    email = Optional[str]
-    country = Optional[str]
-    state = Optional[str]
-    city = Optional[str]
-    zipcode = Optional[str]
-    street = Optional[str]
-    home_number = Optional[str]
-    address_complement = Optional[str]
-    password = Optional[str]
+    name: Optional[str]
+    email: Optional[str]
+    country: Optional[str]
+    state: Optional[str]
+    city: Optional[str]
+    zipcode: Optional[str]
+    street: Optional[str]
+    home_number: Optional[str]
+    address_complement: Optional[str]
+    password: Optional[str]
