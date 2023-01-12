@@ -1,9 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useStore } from 'Vuex';
+const store = useStore();
+const isLoggedIn = computed(() => {
+  return store.getters.isAuthenticated;
+});
+</script>
 
 <template>
   <div class="text-center">
-    <img alt="Vue logo" src="../assets/logo.png" class="mx-auto" />
-    <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+    <h1>Olá Visitante!</h1>
   </div>
 </template>
 
