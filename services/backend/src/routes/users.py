@@ -2,7 +2,7 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from fastapi.security import OAuth2PasswordRequestForm
 
 from tortoise.contrib.fastapi import HTTPNotFoundError
@@ -22,12 +22,12 @@ from src.auth.jwthandler import (
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserOutSchema)
+@router.post("/register", response_model=UserOutSchema, tags=["Users"])
 async def create_user(user: UserInSchema) -> UserOutSchema:
     return await crud.create_user(user)
 
 
-@router.post("/login")
+@router.post("/login", tags=["Users"])
 async def login(user: OAuth2PasswordRequestForm = Depends()):
     user = await validate_user(user)
 
@@ -58,8 +58,20 @@ async def login(user: OAuth2PasswordRequestForm = Depends()):
     return response
 
 
+@router.delete("/logout", tags=["Users"])
+async def logout():
+    response = JSONResponse(content='Logout')
+    try:
+        response.delete_cookie("Authorization")
+        return response
+    except Exception as e:
+
+        raise HTTPException(
+            status_code=401, detail=f"Erro ao realizar logout!")
+
+
 @router.get(
-    "/users/whoami", response_model=UserOutSchema, dependencies=[Depends(get_current_user)]
+    "/users/whoami", response_model=UserOutSchema, dependencies=[Depends(get_current_user)], tags=["Users"]
 )
 async def read_users_me(current_user: UserOutSchema = Depends(get_current_user)):
     return current_user
@@ -69,7 +81,7 @@ async def read_users_me(current_user: UserOutSchema = Depends(get_current_user))
     "/user/{user_id}",
     dependencies=[Depends(get_current_user)],
     response_model=UserOutSchema,
-    responses={404: {"model": HTTPNotFoundError}}
+    responses={404: {"model": HTTPNotFoundError}}, tags=["Users"]
 )
 async def update_note(
     user_id: int,
@@ -84,7 +96,7 @@ async def update_note(
     "/user/{user_id}",
     response_model=Status,
     responses={404: {"model": HTTPNotFoundError}},
-    dependencies=[Depends(get_current_user)],
+    dependencies=[Depends(get_current_user)], tags=["Users"]
 )
 async def delete_user(
     user_id: int, current_user: UserOutSchema = Depends(get_current_user)
