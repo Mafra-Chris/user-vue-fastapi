@@ -17,32 +17,24 @@ const getters = {
 const actions = {
   async register({ dispatch }: ActionContext<State, State>, form: User) {
     await postUser(form)
-    let UserForm = new FormData();
-    if (form.email && form.password) {
-      UserForm.append('username', form.email);
-      UserForm.append('password', form.password);
-    }
-    await dispatch('logIn', UserForm);
+
+    await dispatch('logIn', { username: form.email, password: form.password });
   },
 
   async logIn({ dispatch }: ActionContext<State, State>, user: User) {
     await logInUser(user)
     await dispatch('viewMe');
+
   },
-
-  // async  updateUser({ dispatch }: any, user: User, id: number) {
-  //   await updateUser(user, id)
-  //   await dispatch('viewMe')
-
-  // },
 
   async viewMe({ commit }: ActionContext<State, State>) {
     let data = await getUser()
     await commit('setUser', data);
   },
 
-  async deleteUser({ }, id: number): Promise<any> {
+  async deleteUser({ commit }: ActionContext<State, State>, id: number): Promise<any> {
     await deleteUser(id)
+    commit('logout', null)
   },
 
   async logOut({ commit }: ActionContext<State, State>) {
@@ -54,9 +46,9 @@ const actions = {
 };
 
 const mutations = {
-  setUser(state: State, username: string) {
+  setUser(state: State, user: User) {
     state.user = {}
-    state.user.email = username;
+    state.user = user;
   },
   logout(state: State, user: User) {
     state.user = user;

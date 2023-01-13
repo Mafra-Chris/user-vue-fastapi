@@ -43,7 +43,7 @@ export async function updateUser(user: User, id: number) {
 export async function deleteUser(id: number) {
   try {
 
-    const response = await axios.delete(`user/${id}`);
+    const response = await axios.delete(`${BASE_URL}/user/${id}`);
 
     return response.status
   } catch (error) {
@@ -53,9 +53,16 @@ export async function deleteUser(id: number) {
   }
 }
 export async function logInUser(user: User) {
-  try {
 
-    const response = await axios.post(`${BASE_URL}/login`, user);
+  try {
+    const params = new URLSearchParams();
+    params.append('username', user.username || '');
+    params.append('password', user.password || '');
+    const response = await axios.post(`${BASE_URL}/login`, params, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    });
 
     return response.status
   } catch (error) {

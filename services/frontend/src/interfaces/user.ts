@@ -4,8 +4,8 @@ export interface Address {
   city?: string
   zipcode?: string
   street?: string
-  homeNumber?: string
-  addressComplement?: string
+  home_number?: string
+  address_complement?: string
 }
 
 export interface User extends Address {
@@ -13,5 +13,8 @@ export interface User extends Address {
   name?: string
   email?: string
   password?: string
+  username?: string
+  cpf?: string
+  pis?: string
 }
 
