@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useStore } from 'Vuex';
+import { useStore } from 'vuex';
 
 const store = useStore();
 async function logOut() {

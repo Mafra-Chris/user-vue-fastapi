@@ -21,7 +21,7 @@ export default defineConfig({
     }),
     Layouts({ layoutsDirs: 'src/layouts', defaultLayout: 'default' }),
     AutoImport({
-      imports: ['vue', 'vue-router', 'vue-i18n', '@vueuse/core'],
+      imports: ['vue', 'vue-router', 'vue-i18n', '@vueuse/core', 'vuex'],
       dts: 'src/auto-imports.d.ts',
     }),
     Components({

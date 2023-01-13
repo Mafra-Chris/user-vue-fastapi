@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useStore } from 'Vuex';
+import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { User } from '../interfaces/user';
 import { updateUser } from '../services/userAPI';
