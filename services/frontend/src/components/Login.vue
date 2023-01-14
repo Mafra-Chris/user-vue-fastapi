@@ -27,8 +27,8 @@ const isUsernameInvalid = computed(() => {
   return false;
 });
 async function submitLogin() {
-  const isFormCorrect = await v$.value.$validate();
-  if (!isFormCorrect) {
+  await v$.value.$validate();
+  if (isUsernameInvalid && v$.value.password.$invalid) {
     return;
   }
   const res = await store.dispatch('logIn', userForm);
@@ -38,7 +38,6 @@ async function submitLogin() {
 <template>
   <div class="">
     <h1>Olá Visitante!</h1>
-    {{ v$.$dirty }}
 
     <div>
       <form @submit.prevent="submitLogin">
