@@ -13,3 +13,10 @@ import UserForm from '../components/UserForm.vue';
 </template>
 
 <style></style>
+<route>
+  {
+    meta: {
+      requiresAuth: true
+    }
+  }
+  </route>
