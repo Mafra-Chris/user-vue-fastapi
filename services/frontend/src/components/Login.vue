@@ -1,8 +1,36 @@
 <script setup lang="ts">
 import { useStore } from 'vuex';
+import { useVuelidate } from '@vuelidate/core';
+import { required, email, maxLength } from '@vuelidate/validators';
+import { isCPF, isPIS } from '../helpers/docsBr';
+import { validateStyle, delayTouch } from '../helpers/validation';
 const store = useStore();
 const userForm = reactive({ username: '', password: '' });
+const rules = computed(() => ({
+  username: { required, email, isCPF, isPIS },
+  password: { required },
+}));
+const v$ = useVuelidate(rules, userForm);
+const touchMap = new WeakMap();
+const isUsernameInvalid = computed(() => {
+  if (v$.value.username.$dirty && v$.value.username.required.$invalid) {
+    return true;
+  }
+  if (
+    v$.value.username.isCPF.$invalid &&
+    v$.value.username.$dirty &&
+    v$.value.username.isPIS.$invalid &&
+    v$.value.username.email.$invalid
+  ) {
+    return true;
+  }
+  return false;
+});
 async function submitLogin() {
+  const isFormCorrect = await v$.value.$validate();
+  if (!isFormCorrect) {
+    return;
+  }
   const res = await store.dispatch('logIn', userForm);
 }
 </script>
@@ -10,6 +38,8 @@ async function submitLogin() {
 <template>
   <div class="">
     <h1>Olá Visitante!</h1>
+    {{ v$.$dirty }}
+
     <div>
       <form @submit.prevent="submitLogin">
         <div>
@@ -19,7 +49,12 @@ async function submitLogin() {
             name="username"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model="userForm.username"
+            @input="delayTouch(v$.username, touchMap)"
+            :class="validateStyle(isUsernameInvalid, v$.username.$dirty)"
           />
+          <div v-if="isUsernameInvalid" class="text-red-500">
+            <small>Insira um email, PIS ou CPF válido</small>
+          </div>
         </div>
         <div>
           <label for="password">Senha</label>
@@ -28,7 +63,15 @@ async function submitLogin() {
             name="password"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model="userForm.password"
+            @input="delayTouch(v$.password, touchMap)"
+            :class="validateStyle(v$.password.$invalid, v$.password.$dirty)"
           />
+          <div
+            v-if="v$.password.$invalid && v$.password.$dirty"
+            class="text-red-500"
+          >
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <button
           class="rounded-lg px-3 text-center py-1 bg-purple-600 text-white"

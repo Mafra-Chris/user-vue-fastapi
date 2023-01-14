@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
-import { User } from '../interfaces/user';
 import { updateUser } from '../services/userAPI';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, maxLength } from '@vuelidate/validators';
 import { isCPF, isPIS } from '../helpers/docsBr';
 import { getAddress } from '../services/cepAPI';
+import { validateStyle, delayTouch } from '../helpers/validation';
 const props = defineProps<{ formType: 'register' | 'update' }>();
 const store = useStore();
 const router = useRouter();
@@ -61,19 +61,6 @@ async function deleteUser() {
   router.push({ path: '/' });
 }
 
-function delayTouch(validate: any) {
-  validate.$reset();
-  if (touchMap.has(validate)) {
-    clearTimeout(touchMap.get(validate));
-  }
-  touchMap.set(validate, setTimeout(validate.$touch, 500));
-}
-function validateStyle(isInvalid: boolean, isDirty: boolean) {
-  return isInvalid && isDirty
-    ? 'border border-red-500 '
-    : 'border border-gray-500';
-}
-
 async function setAddress() {
   try {
     let data = await getAddress(userForm.value.zipcode);
@@ -105,7 +92,7 @@ onMounted(() => {
             name="username"
             class="block rounded outline-none px-3 py-1"
             v-model.trim="userForm.name"
-            @input="delayTouch(v$.name)"
+            @input="delayTouch(v$.name, touchMap)"
             :class="validateStyle(v$.name.$invalid, v$.name.$dirty)"
           />
           <div v-if="v$.name.$invalid && v$.name.$dirty" class="text-red-500">
@@ -120,7 +107,7 @@ onMounted(() => {
             name="email"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.email"
-            @input="delayTouch(v$.email)"
+            @input="delayTouch(v$.email, touchMap)"
             :class="validateStyle(v$.email.$invalid, v$.email.$dirty)"
           />
           <div v-if="v$.email.$invalid && v$.email.$dirty" class="text-red-500">
@@ -134,7 +121,7 @@ onMounted(() => {
             name="cpf"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.cpf"
-            @input="delayTouch(v$.cpf)"
+            @input="delayTouch(v$.cpf, touchMap)"
             :class="validateStyle(v$.cpf.$invalid, v$.cpf.$dirty)"
           />
           <div v-if="v$.cpf.$invalid && v$.cpf.$dirty" class="text-red-500">
@@ -148,7 +135,7 @@ onMounted(() => {
             name="pis"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.pis"
-            @input="delayTouch(v$.pis)"
+            @input="delayTouch(v$.pis, touchMap)"
             :class="validateStyle(v$.pis.$invalid, v$.pis.$dirty)"
           />
           <div v-if="v$.pis.$invalid && v$.pis.$dirty" class="text-red-500">
@@ -162,7 +149,7 @@ onMounted(() => {
             name="cep"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.zipcode"
-            @input="delayTouch(v$.zipcode)"
+            @input="delayTouch(v$.zipcode, touchMap)"
             :class="validateStyle(v$.zipcode.$invalid, v$.zipcode.$dirty)"
             @blur="setAddress"
           />
@@ -180,7 +167,7 @@ onMounted(() => {
             name="street"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.street"
-            @input="delayTouch(v$.street)"
+            @input="delayTouch(v$.street, touchMap)"
             :class="validateStyle(v$.street.$invalid, v$.street.$dirty)"
           />
           <div
@@ -197,7 +184,7 @@ onMounted(() => {
             name="home_number"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.home_number"
-            @input="delayTouch(v$.home_number)"
+            @input="delayTouch(v$.home_number, touchMap)"
             :class="
               validateStyle(v$.home_number.$invalid, v$.home_number.$dirty)
             "
@@ -216,7 +203,7 @@ onMounted(() => {
             name="address_complement"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.address_complement"
-            @input="delayTouch(v$.address_complement)"
+            @input="delayTouch(v$.address_complement, touchMap)"
             :class="
               validateStyle(
                 v$.address_complement.$invalid,
@@ -240,7 +227,7 @@ onMounted(() => {
             name="city"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.city"
-            @input="delayTouch(v$.city)"
+            @input="delayTouch(v$.city, touchMap)"
             :class="validateStyle(v$.city.$invalid, v$.city.$dirty)"
           />
           <div v-if="v$.city.$invalid && v$.city.$dirty" class="text-red-500">
@@ -254,7 +241,7 @@ onMounted(() => {
             name="state"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.state"
-            @input="delayTouch(v$.state)"
+            @input="delayTouch(v$.state, touchMap)"
             :class="validateStyle(v$.state.$invalid, v$.state.$dirty)"
           />
           <div v-if="v$.state.$invalid && v$.state.$dirty" class="text-red-500">
@@ -268,7 +255,7 @@ onMounted(() => {
             name="country"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.country"
-            @input="delayTouch(v$.country)"
+            @input="delayTouch(v$.country, touchMap)"
             :class="validateStyle(v$.country.$invalid, v$.country.$dirty)"
           />
           <div
@@ -285,7 +272,7 @@ onMounted(() => {
             name="password"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.password"
-            @input="delayTouch(v$.password)"
+            @input="delayTouch(v$.password, touchMap)"
             :class="validateStyle(v$.password.$invalid, v$.password.$dirty)"
           />
           <div
