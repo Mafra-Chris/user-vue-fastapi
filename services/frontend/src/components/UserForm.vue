@@ -3,13 +3,52 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { User } from '../interfaces/user';
 import { updateUser } from '../services/userAPI';
+import { useVuelidate } from '@vuelidate/core';
+import { required, email, maxLength } from '@vuelidate/validators';
+import { isCPF, isPIS } from '../helpers/docsBr';
+import { getAddress } from '../services/cepAPI';
 const props = defineProps<{ formType: 'register' | 'update' }>();
 const store = useStore();
 const router = useRouter();
-const userForm = ref<User>({});
+const userForm = ref({
+  name: '',
+  email: '',
+  cpf: '',
+  pis: '',
+  zipcode: '',
+  street: '',
+  home_number: '',
+  address_complement: '',
+  city: '',
+  state: '',
+  country: '',
+  password: '',
+});
+const rules = computed(() => ({
+  name: { required },
+  email: { required, email },
+  cpf: { required, isCPF },
+  pis: { required, isPIS },
+  zipcode: { required },
+  street: { required },
+  home_number: { required },
+  address_complement: { required },
+  city: { required },
+  state: { required, maxLength: maxLength(2) },
+  country: { required },
+  password: { required: props.formType == 'register' },
+}));
+
+const v$ = useVuelidate(rules, userForm);
+const touchMap = new WeakMap();
+
 async function submitUser() {
+  const isFormCorrect = await v$.value.$validate();
+  if (!isFormCorrect) {
+    return;
+  }
+
   if (props.formType == 'register') {
-    console.log(userForm.value);
     await store.dispatch('register', userForm.value);
     router.push({ path: '/' });
   } else if (props.formType == 'update') {
@@ -21,6 +60,33 @@ async function deleteUser() {
   await store.dispatch('deleteUser', store.getters.stateUser.id);
   router.push({ path: '/' });
 }
+
+function delayTouch(validate: any) {
+  validate.$reset();
+  if (touchMap.has(validate)) {
+    clearTimeout(touchMap.get(validate));
+  }
+  touchMap.set(validate, setTimeout(validate.$touch, 500));
+}
+function validateStyle(isInvalid: boolean, isDirty: boolean) {
+  return isInvalid && isDirty
+    ? 'border border-red-500 '
+    : 'border border-gray-500';
+}
+
+async function setAddress() {
+  try {
+    let data = await getAddress(userForm.value.zipcode);
+    userForm.value.city = data.city || '';
+    userForm.value.street = data.street || '';
+    userForm.value.state = data.state || '';
+    userForm.value.city = data.city || '';
+    userForm.value.country = 'Brasil';
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 onMounted(() => {
   if (props.formType == 'update' && store.getters.stateUser != null) {
     userForm.value = store.getters.stateUser;
@@ -37,99 +103,180 @@ onMounted(() => {
           <input
             type="text"
             name="username"
-            class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.name"
+            class="block rounded outline-none px-3 py-1"
+            v-model.trim="userForm.name"
+            @input="delayTouch(v$.name)"
+            :class="validateStyle(v$.name.$invalid, v$.name.$dirty)"
           />
+          <div v-if="v$.name.$invalid && v$.name.$dirty" class="text-red-500">
+            <small>Campo obrigatório</small>
+          </div>
         </div>
+
         <div>
-          <label for="username">Email</label>
+          <label for="email">Email</label>
           <input
             type="text"
-            name="username"
+            name="email"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.email"
+            v-model.trim="userForm.email"
+            @input="delayTouch(v$.email)"
+            :class="validateStyle(v$.email.$invalid, v$.email.$dirty)"
           />
+          <div v-if="v$.email.$invalid && v$.email.$dirty" class="text-red-500">
+            <small>Insira um email válido</small>
+          </div>
         </div>
         <div>
-          <label for="username">CPF</label>
+          <label for="cpf">CPF</label>
           <input
             type="text"
-            name="username"
+            name="cpf"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.cpf"
+            v-model.trim="userForm.cpf"
+            @input="delayTouch(v$.cpf)"
+            :class="validateStyle(v$.cpf.$invalid, v$.cpf.$dirty)"
           />
+          <div v-if="v$.cpf.$invalid && v$.cpf.$dirty" class="text-red-500">
+            <small>Insira um CPF válido</small>
+          </div>
         </div>
         <div>
-          <label for="username">PIS</label>
+          <label for="pis">PIS</label>
           <input
             type="text"
-            name="username"
+            name="pis"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.pis"
+            v-model.trim="userForm.pis"
+            @input="delayTouch(v$.pis)"
+            :class="validateStyle(v$.pis.$invalid, v$.pis.$dirty)"
           />
+          <div v-if="v$.pis.$invalid && v$.pis.$dirty" class="text-red-500">
+            <small>Insira um PIS válido</small>
+          </div>
         </div>
         <div>
-          <label for="username">CEP</label>
+          <label for="cep">CEP</label>
           <input
             type="text"
-            name="username"
+            name="cep"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.zipcode"
+            v-model.trim="userForm.zipcode"
+            @input="delayTouch(v$.zipcode)"
+            :class="validateStyle(v$.zipcode.$invalid, v$.zipcode.$dirty)"
+            @blur="setAddress"
           />
+          <div
+            v-if="v$.zipcode.$invalid && v$.zipcode.$dirty"
+            class="text-red-500"
+          >
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <div>
-          <label for="username">Rua</label>
+          <label for="street">Rua</label>
           <input
             type="text"
-            name="username"
+            name="street"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.street"
+            v-model.trim="userForm.street"
+            @input="delayTouch(v$.street)"
+            :class="validateStyle(v$.street.$invalid, v$.street.$dirty)"
           />
+          <div
+            v-if="v$.street.$invalid && v$.street.$dirty"
+            class="text-red-500"
+          >
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <div>
-          <label for="username">Número</label>
+          <label for="home_number">Número</label>
           <input
             type="text"
-            name="username"
+            name="home_number"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.home_number"
+            v-model.trim="userForm.home_number"
+            @input="delayTouch(v$.home_number)"
+            :class="
+              validateStyle(v$.home_number.$invalid, v$.home_number.$dirty)
+            "
           />
+          <div
+            v-if="v$.home_number.$invalid && v$.home_number.$dirty"
+            class="text-red-500"
+          >
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <div>
-          <label for="username">Complemento</label>
+          <label for="address_complement">Complemento</label>
           <input
             type="text"
-            name="username"
+            name="address_complement"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.address_complement"
+            v-model.trim="userForm.address_complement"
+            @input="delayTouch(v$.address_complement)"
+            :class="
+              validateStyle(
+                v$.address_complement.$invalid,
+                v$.address_complement.$dirty
+              )
+            "
           />
+          <div
+            v-if="
+              v$.address_complement.$invalid && v$.address_complement.$dirty
+            "
+            class="text-red-500"
+          >
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <div>
-          <label for="username">Município</label>
+          <label for="city">Município</label>
           <input
             type="text"
-            name="username"
+            name="city"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.city"
+            v-model.trim="userForm.city"
+            @input="delayTouch(v$.city)"
+            :class="validateStyle(v$.city.$invalid, v$.city.$dirty)"
           />
+          <div v-if="v$.city.$invalid && v$.city.$dirty" class="text-red-500">
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <div>
-          <label for="username">Estado</label>
+          <label for="state">Estado</label>
           <input
             type="text"
-            name="username"
+            name="state"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.state"
+            v-model.trim="userForm.state"
+            @input="delayTouch(v$.state)"
+            :class="validateStyle(v$.state.$invalid, v$.state.$dirty)"
           />
+          <div v-if="v$.state.$invalid && v$.state.$dirty" class="text-red-500">
+            <small>Insira um Estado válido</small>
+          </div>
         </div>
         <div>
-          <label for="username">País</label>
+          <label for="country">País</label>
           <input
             type="text"
-            name="username"
+            name="country"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.country"
+            v-model.trim="userForm.country"
+            @input="delayTouch(v$.country)"
+            :class="validateStyle(v$.country.$invalid, v$.country.$dirty)"
           />
+          <div
+            v-if="v$.country.$invalid && v$.country.$dirty"
+            class="text-red-500"
+          >
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <div>
           <label for="password">Senha</label>
@@ -137,8 +284,16 @@ onMounted(() => {
             type="password"
             name="password"
             class="block border border-gray-500 rounded outline-none px-3 py-1"
-            v-model="userForm.password"
+            v-model.trim="userForm.password"
+            @input="delayTouch(v$.password)"
+            :class="validateStyle(v$.password.$invalid, v$.password.$dirty)"
           />
+          <div
+            v-if="v$.password.$invalid && v$.password.$dirty"
+            class="text-red-500"
+          >
+            <small>Campo obrigatório</small>
+          </div>
         </div>
         <button
           class="rounded-lg px-3 text-center py-1 border border-red-500 block text-red-500"
@@ -164,5 +319,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style></style>

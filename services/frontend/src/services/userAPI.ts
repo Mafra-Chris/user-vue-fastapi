@@ -2,11 +2,15 @@ import axios from "axios";
 import { User } from "../interfaces/user";
 
 const BASE_URL = "http://localhost:5000"
+const api = axios.create({
+  withCredentials: true,
+  baseURL: BASE_URL
+})
 
 export async function getUser() {
   try {
     let user: User
-    const response = await axios.get(`${BASE_URL}/users/whoami`)
+    const response = await api.get('/users/whoami')
     user = response.data
 
     return user
@@ -19,7 +23,7 @@ export async function getUser() {
 export async function postUser(form: User) {
   try {
 
-    const response = await axios.post(`${BASE_URL}/register`, form);
+    const response = await api.post('/register', form);
 
     return response.status
   } catch (error) {
@@ -31,7 +35,7 @@ export async function postUser(form: User) {
 export async function updateUser(user: User, id: number) {
   try {
 
-    const response = await axios.patch(`${BASE_URL}/user/${id}`, user);
+    const response = await api.patch(`/user/${id}`, user);
 
     return response.status
   } catch (error) {
@@ -43,7 +47,7 @@ export async function updateUser(user: User, id: number) {
 export async function deleteUser(id: number) {
   try {
 
-    const response = await axios.delete(`${BASE_URL}/user/${id}`);
+    const response = await api.delete(`/user/${id}`);
 
     return response.status
   } catch (error) {
@@ -58,7 +62,7 @@ export async function logInUser(user: User) {
     const params = new URLSearchParams();
     params.append('username', user.username || '');
     params.append('password', user.password || '');
-    const response = await axios.post(`${BASE_URL}/login`, params, {
+    const response = await api.post('/login', params, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
@@ -74,7 +78,7 @@ export async function logInUser(user: User) {
 export async function logOutUser() {
   try {
 
-    const response = await axios.delete(`${BASE_URL}/logout`);
+    const response = await api.delete('/logout');
 
     return response.status
   } catch (error) {

@@ -4,7 +4,6 @@ const store = useStore();
 const userForm = reactive({ username: '', password: '' });
 async function submitLogin() {
   const res = await store.dispatch('logIn', userForm);
-  console.log(res);
 }
 </script>
 
