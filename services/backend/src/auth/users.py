@@ -2,11 +2,12 @@ from fastapi import HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from tortoise.exceptions import DoesNotExist
-
+from validate_docbr import CPF, PIS
 from src.database.models import Users
 from src.schemas.users import UserDatabaseSchema
 
-
+cpf = CPF()
+pis = PIS()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -19,7 +20,12 @@ def get_password_hash(password):
 
 
 async def get_user(username: str):
-    return await UserDatabaseSchema.from_queryset_single(Users.get(email=username))
+    if cpf.validate(username):
+        return await UserDatabaseSchema.from_queryset_single(Users.get(cpf=username))
+    elif pis.validate(username):
+        return await UserDatabaseSchema.from_queryset_single(Users.get(pis=username))
+    else:
+        return await UserDatabaseSchema.from_queryset_single(Users.get(email=username))
 
 
 async def validate_user(user: OAuth2PasswordRequestForm = Depends()):
