@@ -16,30 +16,65 @@ const getters = {
 
 const actions = {
   async register({ dispatch }: ActionContext<State, State>, form: User) {
-    await postUser(form)
+    try {
+      await postUser(form)
+    } catch (error: any) {
+      throw new Error(
+        error.message
+      )
+    }
+
 
     await dispatch('logIn', { username: form.email, password: form.password });
   },
 
   async logIn({ dispatch }: ActionContext<State, State>, user: User) {
-    await logInUser(user)
+    try {
+      await logInUser(user)
+    } catch (error: any) {
+      throw new Error(
+        error.message
+      )
+    }
+
     await dispatch('viewMe');
 
   },
 
   async viewMe({ commit }: ActionContext<State, State>) {
-    let data = await getUser()
-    await commit('setUser', data);
+    let data
+    try {
+      data = await getUser()
+    } catch (error: any) {
+      throw new Error(
+        error.message
+      )
+    }
+
+    commit('setUser', data);
   },
 
   async deleteUser({ commit }: ActionContext<State, State>, id: number): Promise<any> {
-    await deleteUser(id)
+    try {
+      await deleteUser(id)
+    } catch (error: any) {
+      throw new Error(
+        error.message
+      )
+    }
+
     commit('logout', null)
   },
 
   async logOut({ commit }: ActionContext<State, State>) {
+    try {
+      await logOutUser()
+    } catch (error: any) {
+      throw new Error(
+        error.message
+      )
+    }
 
-    await logOutUser()
     let user = null;
     commit('logout', user);
   }

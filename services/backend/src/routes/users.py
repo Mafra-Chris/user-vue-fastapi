@@ -34,7 +34,7 @@ async def login(user: OAuth2PasswordRequestForm = Depends()):
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Email/CPF/PIS ou senha incorretos",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -43,7 +43,7 @@ async def login(user: OAuth2PasswordRequestForm = Depends()):
         data={"sub": user.email}, expires_delta=access_token_expires
     )
     token = jsonable_encoder(access_token)
-    content = {"message": "You've successfully logged in. Welcome back!"}
+    content = {"message": "You've successfully logged in."}
     response = JSONResponse(content=content)
     response.set_cookie(
         "Authorization",

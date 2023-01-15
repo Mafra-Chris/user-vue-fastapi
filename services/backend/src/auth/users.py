@@ -34,13 +34,13 @@ async def validate_user(user: OAuth2PasswordRequestForm = Depends()):
     except DoesNotExist:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Email/CPF/PIS ou senha incorretos",
         )
 
     if not verify_password(user.password, db_user.password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Email/CPF/PIS ou senha incorretos",
         )
 
     return db_user

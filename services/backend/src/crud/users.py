@@ -51,4 +51,4 @@ async def delete_user(user_id, current_user) -> Status:
         return Status(message=f"Usuário {user_id} excluído!")
 
     raise HTTPException(
-        status_code=403, detail=f"Não autorizado excluir usuário!")
+        status_code=403, detail=f"Não autorizado à excluir usuário!")

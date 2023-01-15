@@ -17,6 +17,7 @@ specifiers:
   vitest: ^0.9.3
   vue: ^3.2.25
   vue-router: ^4.0.14
+  vue-toast-notification: ^3.0
   vue-tsc: ^0.34.7
   vuex: 4.1.0
   windicss: ^3.5.1
@@ -29,6 +30,7 @@ dependencies:
   pinia: 2.0.28_prq2uz4lho2pwp6irk4cfkrxwu
   vue: 3.2.45
   vue-router: 4.1.6_vue@3.2.45
+  vue-toast-notification: 3.0.4_vue@3.2.45
   vuex: 4.1.0_vue@3.2.45
 
 devDependencies:
@@ -1485,6 +1487,15 @@ packages:
     dependencies:
       '@vue/devtools-api': 6.4.5
       vue: 3.2.45
+
+  /vue-toast-notification/3.0.4_vue@3.2.45:
+    resolution: {integrity: sha512-rEhLtcKg8SVdBpdN7PrNst5nmY8dw0j3NkNImqurhlGurqR/QDKoou0t2PuCReEOCTKqHvfLCle2I3kwQWDWDQ==}
+    engines: {node: '>=12.15.0'}
+    peerDependencies:
+      vue: ^3.0
+    dependencies:
+      vue: 3.2.45
+    dev: false
 
   /vue-tsc/0.34.17_typescript@4.9.4:
     resolution: {integrity: sha512-jzUXky44ZLHC4daaJag7FQr3idlPYN719/K1eObGljz5KaS2UnVGTU/XSYCd7d6ampYYg4OsyalbHyJIxV0aEQ==}

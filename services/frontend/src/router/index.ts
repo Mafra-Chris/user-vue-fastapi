@@ -10,8 +10,8 @@ const router = createRouter({
 router.beforeEach(async (to, _, next) => {
   try {
     await store.dispatch('viewMe');
-  } catch (error) {
-    console.log(error)
+  } catch (error: any) {
+    console.log(error.message)
   }
 
   if (to.matched.some(record => record.meta.requiresAuth)) {

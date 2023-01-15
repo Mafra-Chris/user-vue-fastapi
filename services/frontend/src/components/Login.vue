@@ -4,6 +4,10 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, email, maxLength } from '@vuelidate/validators';
 import { isCPF, isPIS } from '../helpers/docsBr';
 import { validateStyle, delayTouch } from '../helpers/validation';
+import { useToast } from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+const $toast = useToast();
+
 const store = useStore();
 const userForm = reactive({ username: '', password: '' });
 const rules = computed(() => ({
@@ -31,7 +35,16 @@ async function submitLogin() {
   if (isUsernameInvalid && v$.value.password.$invalid) {
     return;
   }
-  const res = await store.dispatch('logIn', userForm);
+  try {
+    await store.dispatch('logIn', userForm);
+  } catch (error: any) {
+    $toast.open({
+      message: error.message,
+      type: 'error',
+      position: 'top-right',
+      duration: 5000,
+    });
+  }
 }
 </script>
 

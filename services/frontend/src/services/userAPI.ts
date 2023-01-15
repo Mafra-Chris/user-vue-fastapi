@@ -14,10 +14,16 @@ export async function getUser() {
     user = response.data
 
     return user
-  } catch (error) {
-    throw new Error(
-      'Erro ao buscar usuário!'
-    )
+  } catch (error: any) {
+    if (error.response.data.detail) {
+      throw new Error(
+        error.response.data.detail
+      )
+    } else {
+      throw new Error(
+        'Erro ao buscar usuário'
+      )
+    }
   }
 }
 export async function postUser(form: User) {
@@ -26,10 +32,16 @@ export async function postUser(form: User) {
     const response = await api.post('/register', form);
 
     return response.status
-  } catch (error) {
-    throw new Error(
-      'Erro ao registrar usuário!'
-    )
+  } catch (error: any) {
+    if (error.response.data.detail) {
+      throw new Error(
+        error.response.data.detail
+      )
+    } else {
+      throw new Error(
+        'Erro ao registrar usuário'
+      )
+    }
   }
 }
 export async function updateUser(user: User, id: number) {
@@ -38,10 +50,16 @@ export async function updateUser(user: User, id: number) {
     const response = await api.patch(`/user/${id}`, user);
 
     return response.status
-  } catch (error) {
-    throw new Error(
-      'Erro ao atualizar usuário!'
-    )
+  } catch (error: any) {
+    if (error.response.data.detail) {
+      throw new Error(
+        error.response.data.detail
+      )
+    } else {
+      throw new Error(
+        'Erro ao editar usuário'
+      )
+    }
   }
 }
 export async function deleteUser(id: number) {
@@ -50,10 +68,16 @@ export async function deleteUser(id: number) {
     const response = await api.delete(`/user/${id}`);
 
     return response.status
-  } catch (error) {
-    throw new Error(
-      'Erro ao efetuar login!'
-    )
+  } catch (error: any) {
+    if (error.response.data.detail) {
+      throw new Error(
+        error.response.data.detail
+      )
+    } else {
+      throw new Error(
+        'Erro ao excluir usuário'
+      )
+    }
   }
 }
 export async function logInUser(user: User) {
@@ -69,10 +93,18 @@ export async function logInUser(user: User) {
     });
 
     return response.status
-  } catch (error) {
-    throw new Error(
-      'Erro ao efetuar login!'
-    )
+  } catch (error: any) {
+
+    if (error.response.data.detail) {
+      throw new Error(
+        error.response.data.detail
+      )
+    } else {
+      throw new Error(
+        'Erro ao efetuar login!'
+      )
+    }
+
   }
 }
 export async function logOutUser() {
@@ -81,9 +113,15 @@ export async function logOutUser() {
     const response = await api.delete('/logout');
 
     return response.status
-  } catch (error) {
-    throw new Error(
-      'Erro ao efetuar logout!'
-    )
+  } catch (error: any) {
+    if (error.response.data.detail) {
+      throw new Error(
+        error.response.data.detail
+      )
+    } else {
+      throw new Error(
+        'Erro ao efetuar logout'
+      )
+    }
   }
 }

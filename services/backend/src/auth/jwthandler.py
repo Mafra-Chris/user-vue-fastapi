@@ -41,7 +41,7 @@ class OAuth2PasswordBearerCookie(OAuth2):
             if self.auto_error:
                 raise HTTPException(
                     status_code=401,
-                    detail="Not authenticated",
+                    detail="Não autenticado",
                     headers={"WWW-Authenticate": "Bearer"},
                 )
             else:
@@ -70,7 +70,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 async def get_current_user(token: str = Depends(security)):
     credentials_exception = HTTPException(
         status_code=401,
-        detail="Could not validate credentials",
+        detail="Credenciais não validadas",
         headers={"WWW-Authenticate": "Bearer"},
     )
 

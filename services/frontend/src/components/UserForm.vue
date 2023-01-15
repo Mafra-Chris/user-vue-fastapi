@@ -7,6 +7,9 @@ import { required, email, maxLength } from '@vuelidate/validators';
 import { isCPF, isPIS } from '../helpers/docsBr';
 import { getAddress } from '../services/cepAPI';
 import { validateStyle, delayTouch } from '../helpers/validation';
+import { useToast } from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
+const $toast = useToast();
 const props = defineProps<{ formType: 'register' | 'update' }>();
 const store = useStore();
 const router = useRouter();
@@ -49,11 +52,39 @@ async function submitUser() {
   }
 
   if (props.formType == 'register') {
-    await store.dispatch('register', userForm.value);
+    try {
+      await store.dispatch('register', userForm.value);
+    } catch (error: any) {
+      $toast.open({
+        message: error.message,
+        type: 'error',
+        position: 'top-right',
+        duration: 5000,
+      });
+    }
+
     router.push({ path: '/' });
   } else if (props.formType == 'update') {
-    await updateUser(userForm.value, store.getters.stateUser.id);
-    await store.dispatch('viewMe');
+    try {
+      await updateUser(userForm.value, store.getters.stateUser.id);
+    } catch (error: any) {
+      $toast.open({
+        message: error.message,
+        type: 'error',
+        position: 'top-right',
+        duration: 5000,
+      });
+    }
+    try {
+      await store.dispatch('viewMe');
+    } catch (error: any) {
+      $toast.open({
+        message: error.message,
+        type: 'error',
+        position: 'top-right',
+        duration: 5000,
+      });
+    }
   }
 }
 async function deleteUser() {
