@@ -73,6 +73,12 @@ async function submitUser() {
   } else if (props.formType == 'update') {
     try {
       await updateUser(userForm.value, store.getters.stateUser.id);
+      $toast.open({
+        message: 'Perfil atualizado',
+        type: 'success',
+        position: 'top-right',
+        duration: 5000,
+      });
     } catch (error: any) {
       $toast.open({
         message: error.message,
@@ -94,7 +100,17 @@ async function submitUser() {
   }
 }
 async function deleteUser() {
-  await store.dispatch('deleteUser', store.getters.stateUser.id);
+  try {
+    await store.dispatch('deleteUser', store.getters.stateUser.id);
+  } catch (error: any) {
+    $toast.open({
+      message: error.message,
+      type: 'error',
+      position: 'top-right',
+      duration: 5000,
+    });
+  }
+
   router.push({ path: '/' });
 }
 
