@@ -2,10 +2,11 @@
 import { useStore } from 'vuex';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, maxLength } from '@vuelidate/validators';
-import { isCPF, isPIS } from '../helpers/docsBr';
+import { isCPF, isPIS } from '../helpers/validateDocsBr';
 import { validateStyle, delayTouch } from '../helpers/validation';
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
+import { maskCPF, maskPIS } from '../helpers/strings';
 const $toast = useToast();
 
 const store = useStore();
@@ -30,6 +31,13 @@ const isUsernameInvalid = computed(() => {
   }
   return false;
 });
+function masksUsername(input: string) {
+  if (isCPF(input)) {
+    userForm.username = maskCPF(input);
+  } else if (isPIS(input)) {
+    userForm.username = maskPIS(input);
+  }
+}
 async function submitLogin() {
   await v$.value.$validate();
   if (isUsernameInvalid && v$.value.password.$invalid) {
@@ -63,6 +71,7 @@ async function submitLogin() {
             v-model="userForm.username"
             @input="delayTouch(v$.username, touchMap)"
             :class="validateStyle(isUsernameInvalid, v$.username.$dirty)"
+            @blur="masksUsername(userForm.username)"
           />
           <div v-if="isUsernameInvalid" class="text-red-500">
             <small>Insira um email, PIS ou CPF válido</small>

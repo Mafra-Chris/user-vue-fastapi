@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { isCPF, isPIS } from '../helpers/docsBr';
+import { isCPF, isPIS } from '../helpers/validateDocsBr';
 
 describe('Should validate CPF', () => {
   test('valid CPF with mask should be true', () => {

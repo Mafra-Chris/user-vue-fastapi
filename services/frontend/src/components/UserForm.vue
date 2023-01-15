@@ -4,7 +4,13 @@ import { useRouter } from 'vue-router';
 import { updateUser } from '../services/userAPI';
 import { useVuelidate } from '@vuelidate/core';
 import { required, email, maxLength } from '@vuelidate/validators';
-import { isCPF, isPIS } from '../helpers/docsBr';
+import { isCPF, isPIS } from '../helpers/validateDocsBr';
+import {
+  maskCPF,
+  maskPIS,
+  maskCEP,
+  capitalizeFirstLetter,
+} from '../helpers/strings';
 import { getAddress } from '../services/cepAPI';
 import { validateStyle, delayTouch } from '../helpers/validation';
 import { useToast } from 'vue-toast-notification';
@@ -95,13 +101,19 @@ async function deleteUser() {
 async function setAddress() {
   try {
     let data = await getAddress(userForm.value.zipcode);
+    userForm.value.zipcode = maskCEP(userForm.value.zipcode);
     userForm.value.city = data.city || '';
     userForm.value.street = data.street || '';
     userForm.value.state = data.state || '';
     userForm.value.city = data.city || '';
     userForm.value.country = 'Brasil';
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    $toast.open({
+      message: error.message,
+      type: 'error',
+      position: 'top-right',
+      duration: 5000,
+    });
   }
 }
 
@@ -124,6 +136,7 @@ onMounted(() => {
             class="block rounded outline-none px-3 py-1"
             v-model.trim="userForm.name"
             @input="delayTouch(v$.name, touchMap)"
+            @blur="userForm.name = capitalizeFirstLetter(userForm.name)"
             :class="validateStyle(v$.name.$invalid, v$.name.$dirty)"
           />
           <div v-if="v$.name.$invalid && v$.name.$dirty" class="text-red-500">
@@ -153,6 +166,7 @@ onMounted(() => {
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.cpf"
             @input="delayTouch(v$.cpf, touchMap)"
+            @blur="userForm.cpf = maskCPF(userForm.cpf)"
             :class="validateStyle(v$.cpf.$invalid, v$.cpf.$dirty)"
           />
           <div v-if="v$.cpf.$invalid && v$.cpf.$dirty" class="text-red-500">
@@ -167,6 +181,7 @@ onMounted(() => {
             class="block border border-gray-500 rounded outline-none px-3 py-1"
             v-model.trim="userForm.pis"
             @input="delayTouch(v$.pis, touchMap)"
+            @blur="userForm.pis = maskPIS(userForm.pis)"
             :class="validateStyle(v$.pis.$invalid, v$.pis.$dirty)"
           />
           <div v-if="v$.pis.$invalid && v$.pis.$dirty" class="text-red-500">
