@@ -3,7 +3,7 @@ import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import { updateUser } from '../services/userAPI';
 import { useVuelidate } from '@vuelidate/core';
-import { required, email, maxLength } from '@vuelidate/validators';
+import { required, email, maxLength, requiredIf } from '@vuelidate/validators';
 import { isCPF, isPIS } from '../helpers/validateDocsBr';
 import {
   maskCPF,
@@ -45,7 +45,7 @@ const rules = computed(() => ({
   city: { required },
   state: { required, maxLength: maxLength(2) },
   country: { required },
-  password: { required: true },
+  password: { required: requiredIf(props.formType == 'register') },
 }));
 
 const v$ = useVuelidate(rules, userForm);
@@ -368,7 +368,7 @@ onMounted(() => {
         </div>
       </div>
       <button
-        class="rounded-lg px-3 text-center py-1 border border-red-500 block text-red-500"
+        class="rounded p-3 text-center font-medium mt-4 border border-red-500 block text-red-500"
         v-if="formType == 'update'"
         @click="deleteUser"
       >
