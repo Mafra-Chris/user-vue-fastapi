@@ -58,16 +58,21 @@ async function submitLogin() {
 
 <template>
   <div class="">
-    <h1>Olá Visitante!</h1>
+    <div class="mb-8">
+      <h1 class="font-semibold text-3xl">Olá Visitante!</h1>
+      <h2 class="text-gray-500 font-medium">
+        Bem vindo! Por favor, insira seus dados.
+      </h2>
+    </div>
 
     <div>
       <form @submit.prevent="submitLogin">
-        <div>
-          <label for="username">Email, PIS ou CPF</label>
+        <div class="mb-2">
+          <label for="username" class="font-semibold">Email, PIS ou CPF</label>
           <input
             type="text"
             name="username"
-            class="block border border-gray-500 rounded outline-none px-3 py-1"
+            class="field w-full"
             v-model="userForm.username"
             @input="delayTouch(v$.username, touchMap)"
             :class="validateStyle(isUsernameInvalid, v$.username.$dirty)"
@@ -78,11 +83,11 @@ async function submitLogin() {
           </div>
         </div>
         <div>
-          <label for="password">Senha</label>
+          <label for="password" class="font-medium">Senha</label>
           <input
             type="password"
             name="password"
-            class="block border border-gray-500 rounded outline-none px-3 py-1"
+            class="field w-full"
             v-model="userForm.password"
             @input="delayTouch(v$.password, touchMap)"
             :class="validateStyle(v$.password.$invalid, v$.password.$dirty)"
@@ -95,14 +100,14 @@ async function submitLogin() {
           </div>
         </div>
         <button
-          class="rounded-lg px-3 text-center py-1 bg-purple-600 text-white"
+          class="rounded text-center p-3 w-full bg-purple-600 text-white my-4 font-medium"
         >
           Login
         </button>
       </form>
-      <span class="block">
+      <span class="block font-medium">
         Ainda não tem uma conta?
-        <span class="text-purple-600"
+        <span class="text-purple-600 font-bold"
           ><router-link to="/register">Cadastre-se</router-link>
         </span>
       </span>

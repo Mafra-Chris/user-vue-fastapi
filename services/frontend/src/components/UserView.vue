@@ -12,13 +12,18 @@ const user = computed(() => {
 
 <template>
   <div class="">
-    <h1>Olá {{ user.name }}</h1>
-    <button class="rounded-lg px-3 text-center py-1 bg-purple-600 text-white">
+    <h1 class="font-semibold text-3xl">
+      Olá <span class="text-purple-600">{{ user.name }}</span
+      >!
+    </h1>
+    <button
+      class="rounded text-center p-3 w-full bg-purple-600 text-white my-4 font-medium"
+    >
       <router-link to="/edit-user">Editar usuário</router-link>
     </button>
     <button
       @click="logOut()"
-      class="rounded-lg px-3 text-center py-1 border border-purple-600"
+      class="rounded text-center p-3 w-full border border-purple-600 font-medium"
     >
       Logout
     </button>

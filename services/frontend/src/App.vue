@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import './app.css';
+</script>
 
 <template>
   <RouterView />

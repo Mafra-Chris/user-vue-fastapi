@@ -1,7 +1,7 @@
 export function validateStyle(isInvalid: boolean, isDirty: boolean) {
   return isInvalid && isDirty
-    ? 'border border-red-500 '
-    : 'border border-gray-500';
+    ? 'border border-red-500 focus:ring-1 focus:ring-red-500'
+    : '';
 }
 
 export function delayTouch(validate: any, touchMap: WeakMap<object, any>) {
