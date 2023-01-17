@@ -6,8 +6,6 @@ import UserForm from '../components/UserForm.vue';
   <div class="flex justify-center">
     <div>
       <UserForm formType="update"></UserForm>
-
-      <button>Voltar</button>
     </div>
   </div>
 </template>

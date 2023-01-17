@@ -16,11 +16,13 @@ const user = computed(() => {
       Olá <span class="text-purple-600">{{ user.name }}</span
       >!
     </h1>
-    <button
-      class="rounded text-center p-3 w-full bg-purple-600 text-white my-4 font-medium"
-    >
-      <router-link to="/edit-user">Editar usuário</router-link>
-    </button>
+    <router-link to="/edit-user">
+      <button
+        class="rounded text-center p-3 w-full bg-purple-600 text-white my-4 font-medium"
+      >
+        Editar usuário
+      </button>
+    </router-link>
     <button
       @click="logOut()"
       class="rounded text-center p-3 w-full border border-purple-600 font-medium"

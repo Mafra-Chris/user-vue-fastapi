@@ -380,6 +380,14 @@ onMounted(() => {
       >
         Confirmar
       </button>
+      <router-link to="/">
+        <button
+          class="rounded text-center p-3 w-full border border-purple-600 font-medium"
+          v-if="formType == 'update'"
+        >
+          Voltar
+        </button>
+      </router-link>
       <span class="block" v-if="formType == 'register'">
         Já possui uma conta?
         <span class="text-purple-600"
