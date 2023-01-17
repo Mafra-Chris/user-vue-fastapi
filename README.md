@@ -32,9 +32,21 @@ pip install -r requirements.txt
 ```
 uvicorn src.main:app --reload --host 0.0.0.0 --port 5000
 ```
+Acesse em:
+```
+http://localhost:5000/
+```
+Swagger:
+```
+http://localhost:5000/docs
+```
 #### Frontend
 ```
 pnpm run dev
+```
+Acesse em:
+```
+http://localhost:8080/
 ```
 ### Testes
 #### Frontend
@@ -45,3 +57,4 @@ ou
 ```
 pnpm vitest
 ```
+
