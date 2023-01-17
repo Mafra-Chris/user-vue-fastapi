@@ -47,7 +47,7 @@ const rules = computed(() => ({
   country: { required },
   password: { required: requiredIf(props.formType == 'register') },
 }));
-
+const isLoading = ref(false);
 const v$ = useVuelidate(rules, userForm);
 const touchMap = new WeakMap();
 
@@ -59,6 +59,7 @@ async function submitUser() {
 
   if (props.formType == 'register') {
     try {
+      isLoading.value = true;
       await store.dispatch('register', userForm.value);
     } catch (error: any) {
       $toast.open({
@@ -67,11 +68,14 @@ async function submitUser() {
         position: 'top-right',
         duration: 5000,
       });
+    } finally {
+      isLoading.value = false;
     }
 
     router.push({ path: '/' });
   } else if (props.formType == 'update') {
     try {
+      isLoading.value = true;
       await updateUser(userForm.value, store.getters.stateUser.id);
       $toast.open({
         message: 'Perfil atualizado',
@@ -86,8 +90,11 @@ async function submitUser() {
         position: 'top-right',
         duration: 5000,
       });
+    } finally {
+      isLoading.value = false;
     }
     try {
+      isLoading.value = true;
       await store.dispatch('viewMe');
     } catch (error: any) {
       $toast.open({
@@ -96,6 +103,8 @@ async function submitUser() {
         position: 'top-right',
         duration: 5000,
       });
+    } finally {
+      isLoading.value = false;
     }
   }
 }
@@ -142,6 +151,7 @@ onMounted(() => {
 
 <template>
   <div class="w-full">
+    <Loading v-if="isLoading"></Loading>
     <form
       @submit.prevent="submitUser"
       class="p-2 md:w-3/4 lg:w-1/2 xl:w-1/3 m-auto"

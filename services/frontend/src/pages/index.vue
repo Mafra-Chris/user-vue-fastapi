@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useStore } from 'vuex';
+import Loading from '../components/Loading.vue';
 import UserView from '../components/UserView.vue';
 
 const store = useStore();

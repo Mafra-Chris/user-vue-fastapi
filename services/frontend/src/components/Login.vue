@@ -7,8 +7,9 @@ import { validateStyle, delayTouch } from '../helpers/validation';
 import { useToast } from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
 import { maskCPF, maskPIS } from '../helpers/strings';
+import Loading from './Loading.vue';
 const $toast = useToast();
-
+const isLoading = ref(false);
 const store = useStore();
 const userForm = reactive({ username: '', password: '' });
 const rules = computed(() => ({
@@ -44,6 +45,7 @@ async function submitLogin() {
     return;
   }
   try {
+    isLoading.value = true;
     await store.dispatch('logIn', userForm);
   } catch (error: any) {
     $toast.open({
@@ -52,12 +54,15 @@ async function submitLogin() {
       position: 'top-right',
       duration: 5000,
     });
+  } finally {
+    isLoading.value = false;
   }
 }
 </script>
 
 <template>
   <div class="">
+    <Loading v-if="isLoading"></Loading>
     <div class="mb-8">
       <h1 class="font-semibold text-3xl">Olá Visitante!</h1>
       <h2 class="text-gray-500 font-medium">
