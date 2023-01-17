@@ -13,9 +13,9 @@ import {
 } from '../helpers/strings';
 import { getAddress } from '../services/cepAPI';
 import { validateStyle, delayTouch } from '../helpers/validation';
-import { useToast } from 'vue-toast-notification';
+import * as toast from 'vue-toast-notification';
 import 'vue-toast-notification/dist/theme-sugar.css';
-const $toast = useToast();
+const $toast = toast.useToast();
 const props = defineProps<{ formType: 'register' | 'update' }>();
 const store = useStore();
 const router = useRouter();

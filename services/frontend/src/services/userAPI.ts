@@ -1,7 +1,7 @@
 import axios from "axios";
 import { User } from "../interfaces/user";
 
-const BASE_URL = "http://localhost:5000"
+const BASE_URL = import.meta.env.VITE_URL_USER_API
 const api = axios.create({
   withCredentials: true,
   baseURL: BASE_URL
